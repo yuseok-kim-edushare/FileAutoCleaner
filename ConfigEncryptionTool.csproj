@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net481</TargetFramework>
+    <RootNamespace>FileAutoCleaner</RootNamespace>
+    <AssemblyName>ConfigEncryptionTool</AssemblyName>
+    <Authors>Yuseok Kim</Authors>
+    <Description>Config Encryption Tool</Description>
+    <Copyright>Copyright © 2025</Copyright>
+    <License>MIT</License>
+    <Version>0.0.1</Version>
+    <StartupObject>FileAutoCleaner.ConfigEncryptionProgram</StartupObject>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Nullable>disable</Nullable>
+    <LangVersion>8.0</LangVersion>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="ConfigEncryptionProgram.cs" />
+    <Compile Include="ConfigEncryption.cs" />
+    <Compile Include="CustomEncryption.cs" />
+    <Compile Include="ConnectionStringManager.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="app.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="copy after publish" AfterTargets="Publish">
+    <Copy SourceFiles="$(OutputPath)publish\$(AssemblyName).exe" DestinationFiles="$(SolutionDir)release-files\$(TargetFramework)\$(AssemblyName).exe" />
+    <Copy SourceFiles="$(OutputPath)publish\app.config" DestinationFiles="$(SolutionDir)release-files\$(TargetFramework)\app.config" />
+  </Target>
+</Project>

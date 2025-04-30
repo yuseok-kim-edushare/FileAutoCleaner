@@ -1,0 +1,38 @@
+name: CI tests
+
+on:
+  pull_request:
+    branches: [ "main" ]
+    paths-ignore:
+      - '**/*.md'
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - '**/*.md'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ${{ github.workspace }}/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.sln*', '**/*.csproj*') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+     
+    - name: Restore NuGet packages
+      run: |
+        nuget restore FileAutoCleaner.sln
+
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v2
+    
+    - name: Build solution for testing
+      run: |
+        dotnet build FileAutoCleaner.sln --configuration Debug --no-restore

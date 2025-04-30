@@ -1,0 +1,134 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net481</TargetFramework>
+    <RootNamespace>FileAutoCleaner</RootNamespace>
+    <AssemblyName>FileAutoCleaner</AssemblyName>
+    <Authors>Yuseok Kim</Authors>
+    <Description>File management application integrating MS SQL Server and local file system</Description>
+    <Copyright>Copyright © 2025</Copyright>
+    <License>MIT</License>
+    <Version>0.0.1</Version>
+    <StartupObject>FileAutoCleaner.Program</StartupObject>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Platforms>AnyCPU</Platforms>
+    <Nullable>disable</Nullable>
+    <LangVersion>8.0</LangVersion>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+    <PackageReference Include="ILRepack" Version="2.0.41">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="FileAutoCleaner.cs" />
+    <Compile Include="ConfigEncryption.cs" />
+    <Compile Include="CustomEncryption.cs" />
+    <Compile Include="ConnectionStringManager.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="app.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <!-- Define assemblies to merge -->
+  <ItemGroup>
+    <MergeAssemblies Include="$(OutputPath)publish\$(AssemblyName).exe" />
+    <MergeAssemblies Include="$(OutputPath)publish\System.Data.SqlClient.dll" />
+  </ItemGroup>
+
+  <!-- ILRepack Integration -->
+  <PropertyGroup>
+    <!-- Always match the version to your PackageReference -->
+    <PackageILRepackVersion>2.0.41</PackageILRepackVersion>
+    <!-- Define ILRepack paths and arguments -->
+    <ILRepackExePath>$(NuGetPackageRoot)ilrepack\$(PackageILRepackVersion)\tools\ILRepack.exe</ILRepackExePath>
+    <ILRepackOutputDir>$(SolutionDir)release-files\$(TargetFramework)</ILRepackOutputDir>
+    <ILRepackOutputExe>$(ILRepackOutputDir)\$(AssemblyName).exe</ILRepackOutputExe>
+  </PropertyGroup>
+
+  <!-- CreateILRepackCommand Target -->
+  <Target Name="CreateILRepackCommand" BeforeTargets="ILRepack">
+    <PropertyGroup>
+      <ILRepackArgs>/lib:"$(OutputPath)publish"</ILRepackArgs>
+      <ILRepackArgs Condition="'$(TargetFramework)'=='net481'">$(ILRepackArgs) /targetplatform:"v4,C:\Windows\Microsoft.NET\Framework\v4.0.30319"</ILRepackArgs>
+      <ILRepackArgs>$(ILRepackArgs) /union /copyattrs</ILRepackArgs>
+      <ILRepackArgs>$(ILRepackArgs) /out:"$(ILRepackOutputExe)"</ILRepackArgs>
+    </PropertyGroup>
+    <Message Text="ILRepack Args: $(ILRepackArgs)" Importance="high" />
+  </Target>
+
+  <!-- ILRepack Target -->
+  <Target Name="ILRepack" AfterTargets="Publish" DependsOnTargets="CreateILRepackCommand">
+    <!-- Create output directory if it doesn't exist -->
+    <MakeDir Directories="$(ILRepackOutputDir)" Condition="!Exists('$(ILRepackOutputDir)')" />
+    
+    <!-- Verify ILRepack.exe exists -->
+    <Error Text="ILRepack.exe not found at $(ILRepackExePath). Check the ILRepack NuGet package installation." 
+           Condition="!Exists('$(ILRepackExePath)')" />
+
+    <!-- Clear log file -->
+    <WriteLinesToFile
+      File="$(ProjectDir)ilrepack.log"
+      Lines=""
+      Overwrite="true" />
+    <Message Text="Cleared ilrepack.log" Importance="high"/>
+    
+    <!-- Run ILRepack -->
+    <Message Text="Running ILRepack from $(ILRepackExePath)" Importance="high"/>
+    <Message Text="Output will be: $(ILRepackOutputExe)" Importance="high"/>
+    
+    <!-- Execute ILRepack command using the proper format from the reference implementation -->
+    <Exec Command="&quot;$(ILRepackExePath)&quot; $(ILRepackArgs) @(MergeAssemblies->'&quot;%(FullPath)&quot;', ' ') > &quot;$(ProjectDir)ilrepack.log&quot; 2>&amp;1"
+          IgnoreExitCode="true"/>
+    <Message Text="ILRepack.exe executed $(AssemblyName).exe" Importance="high"/>
+    
+    <!-- Process log for errors -->
+    <ReadLinesFromFile File="$(ProjectDir)ilrepack.log">
+      <Output TaskParameter="Lines" ItemName="ILRepackLogLines"/>
+    </ReadLinesFromFile>
+    
+    <ItemGroup>
+      <ILRepackErrorLines Include="@(ILRepackLogLines)"
+        Condition="$([System.String]::Copy('%(ILRepackLogLines.Identity)').ToLower().Contains('error'))"/>
+      <ILRepackErrorLines Include="@(ILRepackLogLines)"
+        Condition="$([System.String]::Copy('%(ILRepackLogLines.Identity)').ToLower().Contains('input file not found'))"/>
+    </ItemGroup>
+    
+    <Error Text="ILRepack error: %(ILRepackErrorLines.Identity)" Condition="@(ILRepackErrorLines->Count()) > 0" />
+    <Message Text="ILRepack successful! Merged executable located at: $(ILRepackOutputExe)" 
+             Condition="Exists('$(ILRepackOutputExe)')" Importance="high"/>
+    <Warning Text="ILRepack may have failed. Output file not found at: $(ILRepackOutputExe)" 
+             Condition="!Exists('$(ILRepackOutputExe)')" />
+  </Target>
+
+</Project>
