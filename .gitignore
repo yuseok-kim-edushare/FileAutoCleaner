@@ -71,3 +71,7 @@ $RECYCLE.BIN/
 
 # ILRepack log
 ilrepack.log
+
+# Release files
+release-files/
+
