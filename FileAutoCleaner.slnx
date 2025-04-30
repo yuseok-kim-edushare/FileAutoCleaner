@@ -1,0 +1,20 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/test/">
+    <Project Path="test/ConfigEncryptionTests.csproj" />
+  </Folder>
+  <Project Path="ConfigEncryptionTool.csproj">
+    <BuildType Solution="Debug|Any CPU" Project="Debug|Any CPU" />
+    <Platform Solution="Debug|Any CPU" Project="Any CPU" />
+    <Build Solution="Debug|Any CPU" Project="true" />
+  </Project>
+  <Project Path="FileAutoCleaner.csproj">
+    <BuildType Solution="Debug|Any CPU" Project="Debug|Any CPU" />
+    <Platform Solution="Debug|Any CPU" Project="Any CPU" />
+    <Build Solution="Debug|Any CPU" Project="true" />
+  </Project>
+</Solution>

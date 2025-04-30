@@ -35,4 +35,4 @@ jobs:
     
     - name: Build solution for testing
       run: |
-        dotnet build FileAutoCleaner.sln --configuration Debug --no-restore
+        dotnet test FileAutoCleaner.slnx --configuration Debug --no-restore

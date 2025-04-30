@@ -35,11 +35,11 @@ jobs:
 
     - name: Restore dependencies
       run: |
-        dotnet restore FileAutoCleaner.sln
+        dotnet restore FileAutoCleaner.slnx
     
     - name: Build solution for release
       run: |
-        dotnet build FileAutoCleaner.sln --configuration Release --no-restore -f net481
+        dotnet build FileAutoCleaner.slnx --configuration Release --no-restore -f net481
         
     - name: Get latest release version and Generate release notes
       id: get_latest_release
