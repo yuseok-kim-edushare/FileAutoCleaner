@@ -37,10 +37,13 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0">
+      <IncludeAssets>all</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
     <PackageReference Include="ILRepack" Version="2.0.41">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -62,8 +65,8 @@
 
   <!-- Define assemblies to merge -->
   <ItemGroup>
-    <MergeAssemblies Include="$(OutputPath)publish\$(AssemblyName).exe" />
-    <MergeAssemblies Include="$(OutputPath)publish\System.Data.SqlClient.dll" />
+    <MergeAssemblies Include="$(OutputPath)\$(AssemblyName).exe" />
+    <MergeAssemblies Include="$(OutputPath)\System.Data.SqlClient.dll" />
   </ItemGroup>
 
   <!-- ILRepack Integration -->
@@ -88,7 +91,7 @@
   </Target>
 
   <!-- ILRepack Target -->
-  <Target Name="ILRepack" AfterTargets="Publish" DependsOnTargets="CreateILRepackCommand">
+  <Target Name="ILRepack" AfterTargets="Build" DependsOnTargets="CreateILRepackCommand" Condition="'$(Configuration)' == 'Release'">
     <!-- Create output directory if it doesn't exist -->
     <MakeDir Directories="$(ILRepackOutputDir)" Condition="!Exists('$(ILRepackOutputDir)')" />
     

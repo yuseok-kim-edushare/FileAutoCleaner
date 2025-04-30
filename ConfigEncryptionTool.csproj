@@ -35,8 +35,8 @@
     </None>
   </ItemGroup>
 
-  <Target Name="copy after publish" AfterTargets="Publish">
-    <Copy SourceFiles="$(OutputPath)publish\$(AssemblyName).exe" DestinationFiles="$(SolutionDir)release-files\$(TargetFramework)\$(AssemblyName).exe" />
-    <Copy SourceFiles="$(OutputPath)publish\app.config" DestinationFiles="$(SolutionDir)release-files\$(TargetFramework)\app.config" />
+  <Target Name="copy after build" AfterTargets="Build">
+    <Copy SourceFiles="$(OutputPath)\$(AssemblyName).exe" DestinationFiles="$(SolutionDir)release-files\$(TargetFramework)\$(AssemblyName).exe" />
+    <Copy SourceFiles="app.config" DestinationFiles="$(SolutionDir)release-files\$(TargetFramework)\app.config" />
   </Target>
 </Project>
