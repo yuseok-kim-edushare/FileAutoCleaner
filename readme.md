@@ -16,7 +16,7 @@
 ## 시스템 요구사항
 
 - Windows 운영체제
-- .NET Framework 4.8.1
+- .NET Framework 4.8
 - MS SQL Server
 - 적절한 파일 시스템 권한
 
@@ -50,6 +50,7 @@
 ```
 
 3. 데이터베이스에 필요한 뷰(view)가 존재하는지 확인합니다.
+    - 뷰의 파일 이름은 "FileName" 열에 있어야 합니다.
 4. (필요시) ConfigEncryptionProgram을 실행하여 연결 문자열을 암호화합니다.
 
 ## 사용 방법

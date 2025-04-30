@@ -16,7 +16,7 @@ This project is a Windows console application that manages files by integrating 
 ## System Requirements
 
 - Windows OS
-- .NET Framework 4.8.1
+- .NET Framework 4.8
 - MS SQL Server
 - Appropriate file system permissions
 
@@ -48,6 +48,7 @@ The solution consists of the following files:
 </appSettings>
 ```
 3. Ensure the required view exists in the database.
+    - The view must have a "FileName" column.
 4. (If needed) Run ConfigEncryptionProgram to encrypt the connection string.
 
 ## Usage
