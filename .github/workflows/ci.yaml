@@ -28,7 +28,7 @@ jobs:
      
     - name: Restore NuGet packages
       run: |
-        nuget restore FileAutoCleaner.sln
+        dotnet restore FileAutoCleaner.slnx
 
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
