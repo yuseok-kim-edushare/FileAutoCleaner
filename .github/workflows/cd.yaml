@@ -35,11 +35,11 @@ jobs:
 
     - name: Restore dependencies
       run: |
-        dotnet restore FileAutoCleaner.slnx
+        dotnet restore FileAutoCleaner.csproj
     
     - name: Build solution for release
       run: |
-        dotnet build FileAutoCleaner.slnx --configuration Release --no-restore -f net481
+        dotnet build FileAutoCleaner.csproj --configuration Release --no-restore -f net48
         
     - name: Get latest release version and Generate release notes
       id: get_latest_release
@@ -92,9 +92,9 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          ${{ github.workspace }}\release-files\net481\app.config
-          ${{ github.workspace }}\release-files\net481\FileAutoCleaner.exe
-          ${{ github.workspace }}\release-files\net481\ConfigEncryptionTool.exe
+          ${{ github.workspace }}\release-files\net48\app.config
+          ${{ github.workspace }}\release-files\net48\FileAutoCleaner.exe
+#          ${{ github.workspace }}\release-files\net48\ConfigEncryptionTool.exe
         tag_name: ${{ env.new_release }}
         name: Release ${{ env.new_release }}
         body: ${{ env.release_notes }}
