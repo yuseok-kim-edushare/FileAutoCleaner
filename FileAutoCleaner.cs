@@ -210,8 +210,21 @@ namespace FileAutoCleaner
                         foreach (string fileName in files)
                         {
                             string sourcePath = Path.Combine(SourceFolderPath, fileName);
-                            string destPath = Path.Combine(TempFolderPath, fileName);
-                            
+                            string destFileName = fileName; // Initialize with original file name
+                            string destPath = Path.Combine(TempFolderPath, destFileName);
+
+                            int count = 1;
+                            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+                            string extension = Path.GetExtension(fileName);
+
+                            // Check for file existence and append counter if duplicated
+                            while (File.Exists(destPath))
+                            {
+                                destFileName = $"{fileNameWithoutExtension}-{count}{extension}";
+                                destPath = Path.Combine(TempFolderPath, destFileName);
+                                count++;
+                            }
+
                             // Move file
                             // 파일 이동
                             File.Move(sourcePath, destPath);
@@ -221,7 +234,7 @@ namespace FileAutoCleaner
                             string insertQuery = $"INSERT INTO {TempTableName} (FileName, MovedDate) VALUES (@FileName, GETDATE())";
                             using (SqlCommand command = new SqlCommand(insertQuery, connection, transaction))
                             {
-                                command.Parameters.AddWithValue("@FileName", fileName);
+                                command.Parameters.AddWithValue("@FileName", destFileName); // Use the potentially modified destFileName
                                 command.ExecuteNonQuery();
                             }
                         }
