@@ -72,7 +72,7 @@
   <!-- ILRepack Integration -->
   <PropertyGroup>
     <!-- Always match the version to your PackageReference -->
-    <PackageILRepackVersion>2.0.43</PackageILRepackVersion>
+    <PackageILRepackVersion>2.0.44</PackageILRepackVersion>
     <!-- Define ILRepack paths and arguments -->
     <ILRepackExePath>$(NuGetPackageRoot)ilrepack\$(PackageILRepackVersion)\tools\ILRepack.exe</ILRepackExePath>
     <ILRepackOutputDir>$(SolutionDir)release-files\$(TargetFramework)</ILRepackOutputDir>
