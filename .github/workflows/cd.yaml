@@ -92,7 +92,7 @@ jobs:
       run: |
         mkdir -p ${{ github.workspace }}\release-files\net48
         copy ${{ github.workspace }}\app.config ${{ github.workspace }}\release-files\net48\app.config
-        copy ${{ github.workspace }}\bin\Release\FileAutoCleaner.exe ${{ github.workspace }}\release-files\net48\FileAutoCleaner.exe
+        copy ${{ github.workspace }}\bin\Release\net48\FileAutoCleaner.exe ${{ github.workspace }}\release-files\net48\FileAutoCleaner.exe
 
     - name: Create Release
       uses: softprops/action-gh-release@v2
