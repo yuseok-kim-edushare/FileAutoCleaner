@@ -37,7 +37,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.9.0">
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.1">
       <IncludeAssets>all</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
