@@ -31,7 +31,7 @@ jobs:
         dotnet restore FileAutoCleaner.slnx
 
     - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v3
     
     - name: Build solution for testing
       run: |
